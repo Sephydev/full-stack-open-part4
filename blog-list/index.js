@@ -1,23 +1,15 @@
 const config = require('./utils/config')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
+const Blog = require('./models/blog')
+
 const express = require('express')
 const mongoose = require('mongoose')
 
 const app = express()
 app.use(express.json())
 
-
 app.use(logger)
-
-const blogSchema = mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number,
-})
-
-const Blog = mongoose.model('Blog', blogSchema)
 
 mongoose.connect(config.MONGODB_URI)
 
