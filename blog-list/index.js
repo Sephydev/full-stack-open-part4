@@ -1,5 +1,6 @@
 const config = require('./utils/config')
 const middleware = require('./utils/middleware')
+const logger = require('./utils/logger')
 const express = require('express')
 const mongoose = require('mongoose')
 
@@ -7,7 +8,7 @@ const app = express()
 app.use(express.json())
 
 
-app.use(middleware.logger)
+app.use(logger)
 
 const blogSchema = mongoose.Schema({
   title: String,

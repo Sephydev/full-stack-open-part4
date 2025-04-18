@@ -1,11 +1,3 @@
-const logger = (request, response, next) => {
-  console.log('METHOD:', request.method)
-  console.log('PATH:', request.path)
-  console.log('BODY:', request.path)
-  console.log('---')
-  next()
-}
-
 const unknownEndpoint = (request, response) => {
   response.status(404).json({ error: 'unknown endpoint' })
 }
@@ -22,7 +14,6 @@ const errorHandler = (error, request, response, next) => {
 }
 
 module.exports = {
-  logger,
   unknownEndpoint,
   errorHandler
 }
