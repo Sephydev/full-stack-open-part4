@@ -1,26 +1,5 @@
+const app = require('./app')
 const config = require('./utils/config')
-const middleware = require('./utils/middleware')
-const logger = require('./utils/logger')
-const Blog = require('./models/blog')
-const blogRouter = require('./controllers/blogRouter')
-
-const express = require('express')
-const mongoose = require('mongoose')
-
-const app = express()
-app.use(express.json())
-
-app.use(logger)
-
-mongoose.connect(config.MONGODB_URI)
-
-app.use(express.json())
-
-app.use('/api/blogs', blogRouter)
-
-app.use(middleware.unknownEndpoint)
-
-app.use(middleware.errorHandler)
 
 app.listen(config.PORT, () => {
   console.log(`Server running on port ${config.PORT}`)
