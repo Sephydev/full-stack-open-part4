@@ -3,6 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 
 const app = express()
+app.use(express.json())
 
 const logger = (request, response, next) => {
   console.log('METHOD:', request.method)
