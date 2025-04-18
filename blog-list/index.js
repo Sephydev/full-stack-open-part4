@@ -1,19 +1,13 @@
 const config = require('./utils/config')
+const middleware = require('./utils/middleware')
 const express = require('express')
 const mongoose = require('mongoose')
 
 const app = express()
 app.use(express.json())
 
-const logger = (request, response, next) => {
-  console.log('METHOD:', request.method)
-  console.log('PATH:', request.path)
-  console.log('BODY:', request.body)
-  console.log('---')
-  next()
-}
 
-app.use(logger)
+app.use(middleware.logger)
 
 const blogSchema = mongoose.Schema({
   title: String,
@@ -43,23 +37,9 @@ app.post('/api/blogs', (request, response, next) => {
     .catch(error => next(error))
 })
 
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
+app.use(middleware.unknownEndpoint)
 
-app.use(unknownEndpoint)
-
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-
-  if (error.name === 'ValidationError') {
-    response.status(400).json({ error: error.message })
-  }
-
-  next(error)
-}
-
-app.use(errorHandler)
+app.use(middleware.errorHandler)
 
 app.listen(config.PORT, () => {
   console.log(`Server running on port ${config.PORT}`)
