@@ -1,8 +1,13 @@
 const { test, describe } = require('node:test')
 const assert = require('node:assert')
-const { cp } = require('node:fs')
+const listHelper = require('../utils/list_helper')
 
-const totalLikes = require('../utils/list_helper').totalLikes
+test('dummy returns one', () => {
+  const blogs = []
+
+  const result = listHelper.dummy(blogs)
+  assert.strictEqual(result, 1)
+})
 
 describe('total likes', () => {
   const listWithZeroBlog = []
@@ -69,17 +74,17 @@ describe('total likes', () => {
   ]
 
   test('when list is empty, return 0', () => {
-    const result = totalLikes(listWithZeroBlog)
+    const result = listHelper.totalLikes(listWithZeroBlog)
     assert.strictEqual(result, 0)
   })
 
   test('when list has only one blog, equals the likes of that', () => {
-    const result = totalLikes(listWithOneBlog)
+    const result = listHelper.totalLikes(listWithOneBlog)
     assert.strictEqual(result, 5)
   })
 
   test('when list has multiple blog, calculate correctly', () => {
-    const result = totalLikes(listWithMultipleBlog)
+    const result = listHelper.totalLikes(listWithMultipleBlog)
     assert.strictEqual(result, 36)
   })
 })
