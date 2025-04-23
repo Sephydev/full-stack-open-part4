@@ -28,16 +28,17 @@ const favoriteBlog = (blogs) => {
 }
 
 const mostBlogs = (blogs) => {
-  const blogsByAuthor = lodash.groupBy(blogs, 'author')
+  const authors = lodash.countBy(blogs, 'author')
 
-  let maxBlogs = 0
+  let blogPostRecord = 0
   let mostProductiveAuthor = {}
 
-  lodash.forEach(blogsByAuthor, authorPost => {
-    if (authorPost.length >= maxBlogs) {
-      maxBlogs = authorPost.length
+  lodash.forEach(authors, (nbOfBlogs, author) => {
+    if (nbOfBlogs >= blogPostRecord) {
+      blogPostRecord = nbOfBlogs
       mostProductiveAuthor = {
-        author: authorPost[0].author, blogs: maxBlogs
+        author: author,
+        blogs: nbOfBlogs
       }
     }
   })
