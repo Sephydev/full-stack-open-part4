@@ -8,13 +8,16 @@ const express = require('express')
 const mongoose = require('mongoose')
 
 const app = express()
+
 app.use(express.json())
 
 app.use(logger)
 
 mongoose.connect(config.MONGODB_URI)
-
-app.use(express.json())
+  .then(() => {
+    console.log('connecting to MongoDB')
+  })
+  .catch(error => console.log(error.message))
 
 app.use('/api/blogs', blogRouter)
 

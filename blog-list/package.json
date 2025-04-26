@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch index.js",
+    "dev": "cross-env NODE_ENV=dev node --watch index.js",
     "lint": "npx eslint .",
-    "test": "node --test"
+    "test": "cross-env NODE_ENV=test node --test"
   },
   "author": "",
   "license": "ISC",
@@ -16,8 +16,10 @@
     "mongoose": "^8.13.2"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
     "eslint": "^9.24.0",
-    "globals": "^16.0.0"
+    "globals": "^16.0.0",
+    "supertest": "^7.1.0"
   }
 }
