@@ -64,7 +64,7 @@ test('create a new blog and save it to the db', async () => {
   assert(titles.includes('Cirno Days'))
 })
 
-test.only("if 'like' property don't exist, set it to 0", async () => {
+test("if 'like' property don't exist, set it to 0", async () => {
   const newBlog = {
     title: "If it exist, Flandre can break it",
     author: "Flandre Scarlet",
@@ -80,6 +80,30 @@ test.only("if 'like' property don't exist, set it to 0", async () => {
 
   assert.strictEqual(blogAfter.body.length, initialBlogs.length + 1)
   assert.strictEqual(blogAfter.body[blogAfter.body.length - 1].likes, 0)
+})
+
+test.only("if 'title' property don't exist, send a 400 status code", async () => {
+  const newBlog = {
+    author: "Flandre Scarlet",
+    url: "https://example.com",
+    likes: 9
+  }
+
+  await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
+test.only("if 'url' property don't exist, send a 400 status code", async () => {
+  const newBlog = {
+    title: "If it exist, Flandre can break it.",
+    author: "Flandre Scarlet",
+    likes: 9
+  }
+
+  await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
 })
 
 after(async () => {
