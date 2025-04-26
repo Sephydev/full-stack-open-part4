@@ -35,12 +35,33 @@ test('return all notes in JSON format', async () => {
   assert.strictEqual(blogInDb.body.length, initialBlogs.length)
 })
 
-test.only("property '_id' is correctly replaced by 'id'", async () => {
+test("property '_id' is correctly replaced by 'id'", async () => {
   const blogInDb = await api.get('/api/blogs')
   const keysOfBlog = blogInDb.body.map(blog => Object.keys(blog)).flat()
 
   assert(keysOfBlog.includes('id'))
   assert(!keysOfBlog.includes('_id'))
+})
+
+test.only('create a new blog and save it to the db', async () => {
+  const newBlog = {
+    title: "Cirno Days",
+    author: "Cirno",
+    url: "https://example.com",
+    likes: 9
+  }
+
+  await api.post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogAfter = await api.get('/api/blogs')
+
+  assert.strictEqual(blogAfter.body.length, initialBlogs.length + 1)
+
+  const contents = blogAfter.body.map(blog => blog.title)
+  assert(contents.includes('Cirno Days'))
 })
 
 after(async () => {
