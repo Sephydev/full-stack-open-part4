@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const { keys } = require('lodash')
 
 const api = supertest(app)
 
@@ -26,13 +27,20 @@ beforeEach(async () => {
 })
 
 test('return all notes in JSON format', async () => {
-  await api
+  const blogInDb = await api
     .get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  const blogInDb = await Blog.find({})
-  assert.strictEqual(blogInDb.length, initialBlogs.length)
+  assert.strictEqual(blogInDb.body.length, initialBlogs.length)
+})
+
+test.only("property '_id' is correctly replaced by 'id'", async () => {
+  const blogInDb = await api.get('/api/blogs')
+  const keysOfBlog = blogInDb.body.map(blog => Object.keys(blog)).flat()
+
+  assert(keysOfBlog.includes('id'))
+  assert(!keysOfBlog.includes('_id'))
 })
 
 after(async () => {
