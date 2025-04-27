@@ -4,26 +4,14 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const blog_helper = require('../utils/blog_request__test_helper')
 const { keys } = require('lodash')
 
 const api = supertest(app)
 
-const initialBlogs = [{
-  title: "Test 1",
-  author: "Sephydev",
-  url: 'https://example.com',
-  likes: 42
-},
-{
-  title: 'Test 2',
-  author: 'Sephydev',
-  url: 'https://example.com',
-  likes: 420
-}]
-
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(initialBlogs)
+  await Blog.insertMany(blog_helper.initialBlogs)
 })
 
 test('return all notes in JSON format', async () => {
@@ -32,12 +20,12 @@ test('return all notes in JSON format', async () => {
     .expect(200)
     .expect('Content-Type', /application\/json/)
 
-  assert.strictEqual(blogInDb.body.length, initialBlogs.length)
+  assert.strictEqual(blogInDb.body.length, blog_helper.initialBlogs.length)
 })
 
 test("property '_id' is correctly replaced by 'id'", async () => {
-  const blogInDb = await api.get('/api/blogs')
-  const keysOfBlog = blogInDb.body.map(blog => Object.keys(blog)).flat()
+  const blogInDb = await blog_helper.getBlogs()
+  const keysOfBlog = blogInDb.map(blog => Object.keys(blog)).flat()
 
   assert(keysOfBlog.includes('id'))
   assert(!keysOfBlog.includes('_id'))
@@ -56,15 +44,15 @@ test('create a new blog and save it to the db', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const blogAfter = await api.get('/api/blogs')
+  const blogAfter = await blog_helper.getBlogs()
 
-  assert.strictEqual(blogAfter.body.length, initialBlogs.length + 1)
+  assert.strictEqual(blogAfter.length, blog_helper.initialBlogs.length + 1)
 
-  const titles = blogAfter.body.map(blog => blog.title)
+  const titles = blogAfter.map(blog => blog.title)
   assert(titles.includes('Cirno Days'))
 })
 
-test("if 'like' property don't exist, set it to 0", async () => {
+test.only("if 'like' property don't exist, set it to 0", async () => {
   const newBlog = {
     title: "If it exist, Flandre can break it",
     author: "Flandre Scarlet",
@@ -76,13 +64,13 @@ test("if 'like' property don't exist, set it to 0", async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const blogAfter = await api.get('/api/blogs')
+  const blogAfter = await blog_helper.getBlogs()
 
-  assert.strictEqual(blogAfter.body.length, initialBlogs.length + 1)
-  assert.strictEqual(blogAfter.body[blogAfter.body.length - 1].likes, 0)
+  assert.strictEqual(blogAfter.length, blog_helper.initialBlogs.length + 1)
+  assert.strictEqual(blogAfter[blogAfter.length - 1].likes, 0)
 })
 
-test.only("if 'title' property don't exist, send a 400 status code", async () => {
+test("if 'title' property don't exist, send a 400 status code", async () => {
   const newBlog = {
     author: "Flandre Scarlet",
     url: "https://example.com",
@@ -94,7 +82,7 @@ test.only("if 'title' property don't exist, send a 400 status code", async () =>
     .expect(400)
 })
 
-test.only("if 'url' property don't exist, send a 400 status code", async () => {
+test("if 'url' property don't exist, send a 400 status code", async () => {
   const newBlog = {
     title: "If it exist, Flandre can break it.",
     author: "Flandre Scarlet",
