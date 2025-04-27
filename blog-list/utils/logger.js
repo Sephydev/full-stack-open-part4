@@ -1,8 +1,11 @@
 const logger = (request, response, next) => {
-  console.log('METHOD:', request.method)
-  console.log('PATH:', request.path)
-  console.log('BODY:', request.body)
-  console.log('---')
+  if (process.env.NODE_ENV !== 'test') {
+    console.log('METHOD:', request.method)
+    console.log('PATH:', request.path)
+    console.log('BODY:', request.body)
+    console.log('---')
+  }
+
   next()
 }
 
