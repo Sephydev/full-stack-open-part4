@@ -100,7 +100,7 @@ describe('when there is initial blogs', () => {
   })
 
   describe('when deleting a blog', () => {
-    test.only('send a status code of 204', async () => {
+    test('send a status code of 204', async () => {
       const blogsInDb = await blog_helper.getBlogs()
       const blogToDelete = blogsInDb[0]
 
@@ -108,6 +108,38 @@ describe('when there is initial blogs', () => {
 
       const blogsAfter = await blog_helper.getBlogs()
       assert.strictEqual(blogsAfter.length, blog_helper.initialBlogs.length - 1)
+    })
+  })
+
+  describe('when updating a blog', () => {
+    test('when id is valid', async () => {
+      const blogsInDb = await blog_helper.getBlogs()
+      const blogToModify = blogsInDb[0]
+      blogToModify.likes = 9
+
+      await api
+        .put(`/api/blogs/${blogToModify.id}`)
+        .send(blogToModify)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      const blogsAfter = await blog_helper.getBlogs()
+      assert.strictEqual(blogsAfter.length, blog_helper.initialBlogs.length)
+
+      const modifiedBlog = blogsAfter[0]
+      assert.strictEqual(modifiedBlog.likes, 9)
+    })
+
+    test('when id is invalid', async () => {
+      const invalidId = '1234'
+
+      await api.put(`/api/blogs/${invalidId}`).expect(400)
+    })
+
+    test.only("when id is valid but doesn't exist", async () => {
+      const validId = await blog_helper.createValidId()
+
+      await api.put(`/api/blogs/${validId}`).expect(404)
     })
   })
 })

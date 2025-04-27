@@ -13,6 +13,20 @@ const initialBlogs = [{
   likes: 420
 }]
 
+const createValidId = async () => {
+  const newBlog = new Blog({
+    title: 'willDelete',
+    author: 'delete',
+    url: 'delete',
+    likes: 999
+  })
+
+  const noteToDelete = await newBlog.save()
+  const validId = noteToDelete.id
+  await Blog.findByIdAndDelete(validId)
+  return validId
+}
+
 const getBlogs = async () => {
   const blogs = await Blog.find({})
   return blogs.map(blog => blog.toJSON())
@@ -20,5 +34,5 @@ const getBlogs = async () => {
 
 
 module.exports = {
-  initialBlogs, getBlogs
+  initialBlogs, getBlogs, createValidId
 }
